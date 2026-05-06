@@ -8,8 +8,8 @@ inputs:
     description: 'Name of the version to extract'
     required: false
 outputs:
-  extracted:
-    value: "${{steps.extract_json.outputs.extracted}}"
+  extract:
+    value: "${{steps.extract_json.outputs.extract}}"
 runs:
   using: "composite"
   steps:
@@ -23,4 +23,4 @@ runs:
       id: extract_json
       shell: bash
       run: |
-        echo "extracted=$(jq -r '.${{inputs.name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
+        echo "extract=$(jq -r '.${{inputs.name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
