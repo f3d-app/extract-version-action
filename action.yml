@@ -1,0 +1,42 @@
+name: 'Extract specific version from a versions.json file'
+description: 'Extract a specific version from a versions.json file used in F3D CI'
+inputs:
+  file:
+    description: 'Local file to recover version information from'
+    required: true
+  name:
+    description: 'Name of the version to extract'
+    required: false
+  prefix:
+    description: 'A version prefix'
+    required: false
+  special_name:
+    description: 'A special name to extract, ignoring other arguments'
+    required: false
+
+outputs:
+  extracted:
+    value: "${{steps.extract_json.outputs.extracted}}"
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Check required inputs
+      shell: bash
+      run: |
+        [[ "${{ inputs.file }}" ]] || { echo "file input is empty" ; exit 1; }
+
+    - name: Extract specific json info
+      if: ${{inputs.special_name}} == ""
+      id: extract_json
+      shell: bash
+      run: |
+        echo "extracted=$(jq -r '${{inputs.prefix}}versions.${{inputs.name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
+
+    - name: Extract specific json info
+      if: ${{inputs.special_name}} != ""
+      id: extract_json
+      shell: bash
+      run: |
+        echo "extracted=$(jq -r '${{inputs.special_name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
