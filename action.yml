@@ -33,4 +33,4 @@ runs:
       shell: bash
       run: |
         [ -z ${{inputs.special_name}} ] && echo "extracted=$(jq -r '${{inputs.prefix}}versions.${{inputs.name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
-        [ -n ${{inputs.special_name}} ] && echo "extracted=$(jq -r '${{inputs.special_name' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
+        [ -n ${{inputs.special_name}} ] && echo "extracted=$(jq -r '${{inputs.special_name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
