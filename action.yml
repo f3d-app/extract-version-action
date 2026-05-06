@@ -7,17 +7,9 @@ inputs:
   name:
     description: 'Name of the version to extract'
     required: false
-  prefix:
-    description: 'A version prefix'
-    required: false
-  special_name:
-    description: 'A special name to extract, ignoring other arguments'
-    required: false
-
 outputs:
   extracted:
     value: "${{steps.extract_json.outputs.extracted}}"
-
 runs:
   using: "composite"
   steps:
@@ -27,14 +19,8 @@ runs:
       run: |
         [[ "${{ inputs.file }}" ]] || { echo "file input is empty" ; exit 1; }
 
-    - name: test jq
-      shell: bash
-      run: jq -r '.versions.sqlite_csb' < ${{ inputs.file }}
-
-    # Only one of the two lines is run
     - name: Extract specific json info
       id: extract_json
       shell: bash
       run: |
-        [ -z ${{inputs.special_name}} ] && echo "extracted=$(jq -r '.${{inputs.prefix}}versions.${{inputs.name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
-        [ -n ${{inputs.special_name}} ] && echo "extracted=$(jq -r '.${{inputs.special_name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
+        echo "extracted=$(jq -r '.${{inputs.name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
