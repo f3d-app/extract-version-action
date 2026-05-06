@@ -7,6 +7,14 @@ inputs:
   name:
     description: 'Name of the version to extract'
     required: false
+  minver_label:
+    description: 'Label to control minimum versions'
+    required: false
+    default: "no-minver"
+  special_name:
+    description: 'Special name to extract, overriding other inputs'
+    required: false
+
 outputs:
   extract:
     value: "${{steps.extract_json.outputs.extract}}"
@@ -19,8 +27,17 @@ runs:
       run: |
         [[ "${{ inputs.file }}" ]] || { echo "file input is empty" ; exit 1; }
 
+    - name: Name to extract is not special name
+      if: ${{inputs.special_name}} == ""
+      shell: bash
+      run: echo "NAME_TO_EXTRACT='.${{inputs.minver_label == 'minver' && 'min_' || ''}}versions.${{inputs.name}}' >> $GITHUB_ENV
+
+    - name: Name to extract is special name
+      if: ${{inputs.special_name}} != ""
+      shell: bash
+      run: echo "NAME_TO_EXTRACT='.${{inputs.special_name}}' >> $GITHUB_ENV
+
     - name: Extract specific json info
       id: extract_json
       shell: bash
-      run: |
-        echo "extract=$(jq -r '.${{inputs.name}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
+      run: echo "extract=$(jq -r '.${{env.NAME_TO_EXTRACT}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
