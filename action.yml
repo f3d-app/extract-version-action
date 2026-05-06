@@ -27,6 +27,10 @@ runs:
       run: |
         [[ "${{ inputs.file }}" ]] || { echo "file input is empty" ; exit 1; }
 
+    - name: test jq
+      shell: bash
+      run: jq -r '.versions.sqlite_csb' < ${{ inputs.file }}
+
     # Only one of the two lines is run
     - name: Extract specific json info
       id: extract_json
