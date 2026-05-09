@@ -27,7 +27,8 @@ runs:
     - name: Check required inputs
       shell: bash
       run: |
-        [[ "${{ inputs.file }}" ]] || { echo "file input is empty" ; exit 1; }
+        [[ "${{inputs.file}}" ]] || { echo "file input is empty" ; exit 1; }
+        [[ -f "${{inputs.file}}" ]] || { echo "file does not exist ; exit 1; }
 
     - name: Name to extract is not special name
       if: inputs.special_name == ''
@@ -39,7 +40,9 @@ runs:
       shell: bash
       run: echo "NAME_TO_EXTRACT=.${{inputs.special_name}}" >> $GITHUB_ENV
 
-    - name: Extract specific json info
+    - name: Check input and extract specific json info
       id: extract_json
       shell: bash
-      run: echo "extract=$(jq -r '${{env.NAME_TO_EXTRACT}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
+      run: |
+        [[ "${{env.NAME_TO_EXTRACT}}" ]] || { echo "No name to extract provided" ; exit 1; }
+        echo "extract=$(jq -e -r '${{env.NAME_TO_EXTRACT}}' < ${{ inputs.file }})" >> $GITHUB_OUTPUT
