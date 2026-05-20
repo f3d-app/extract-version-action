@@ -33,7 +33,7 @@ runs:
     - name: Name to extract is not special name
       if: inputs.special_name == ''
       shell: bash
-      run: echo "NAME_TO_EXTRACT=.${{inputs.minver_label == 'minver' && 'min_' || ''}}versions.${{inputs.name}}" >> $GITHUB_ENV
+      run: echo "NAME_TO_EXTRACT=.${{inputs.name}}.${{inputs.minver_label == 'minver' && 'min_' || ''}}version" >> $GITHUB_ENV
 
     - name: Name to extract is special name
       if: inputs.special_name != ''
